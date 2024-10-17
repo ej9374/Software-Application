@@ -1,0 +1,54 @@
+/* 헤더 컨테이너 스타일 */
+header {
+    display: flex;
+    justify-content: space-between; /* 로고와 네비게이션 바를 양쪽 끝으로 정렬 */
+    align-items: center;
+    padding: 16px 32px;
+    background-color: #333; /* 헤더 배경색 */
+    color: #fff;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* 그림자 추가 */
+}
+
+/* 로고 스타일 */
+header h1 {
+    font-size: 24px;
+    font-weight: bold;
+    cursor: pointer;
+    color: #fff; /* 로고 텍스트 색상 */
+    transition: color 0.3s;
+}
+
+header h1:hover {
+    color: #00c853; /* 로고 텍스트에 호버 시 색상 변경 */
+}
+
+/* 네비게이션 바 스타일 */
+.bar {
+    display: flex;
+    gap: 20px; /* 버튼 간 간격 */
+}
+
+.bar span {
+    font-size: 16px;
+    cursor: pointer;
+    color: #fff;
+    transition: color 0.3s;
+}
+
+.bar span:hover {
+    color: #00c853; /* 네비게이션 링크에 호버 시 색상 변경 */
+}
+
+/* 반응형 디자인 */
+@media (max-width: 768px) {
+    header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .bar {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+}

@@ -1,0 +1,75 @@
+/* 회원가입 컨테이너 스타일 */
+.signup-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    max-width: 500px; /* 최대 너비 설정 */
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #f7f7f7;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* 입력 필드 스타일 */
+.signup-container input {
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 16px;
+}
+
+/* 레이블 스타일 */
+.signup-container label {
+    width: 100%;
+    font-size: 14px;
+    margin-top: 10px;
+    color: #333;
+}
+
+/* 평점 선택 컨테이너 스타일 */
+.rating-container {
+    width: 100%;
+    margin-top: 20px;
+    display: flex;
+    flex-wrap: wrap; /* 여러 줄로 표시 */
+    gap: 10px; /* 간격 추가 */
+    justify-content: space-between;
+}
+
+/* 평점 선택 스타일 */
+.rating-container div {
+    flex: 1 1 calc(50% - 10px); /* 화면의 절반 너비 */
+    display: flex;
+    flex-direction: column;
+}
+
+.rating-container select {
+    padding: 8px;
+    margin-top: 5px;
+    border-radius: 4px;
+    border: 1px solid #ddd;
+    font-size: 14px;
+}
+
+/* 버튼 스타일 */
+.signup-container button {
+    width: 100%;
+    padding: 10px;
+    margin-top: 20px;
+    background-color: #333;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.signup-container button:hover {
+    background-color: #00c853; /* 호버 시 색상 변경 */
+}

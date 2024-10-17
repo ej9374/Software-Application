@@ -1,23 +1,36 @@
-import React, {useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import dummy from "../../DB/data.json";
 import './Home.css';
 
-function Home(){
+function Home() {
+    const [recipes, setRecipes] = useState([]);
+
+    useEffect(() => {
+        // JSON 데이터에서 레시피를 가져와 상태에 설정
+        setRecipes(dummy);
+    }, []);
 
     return (
-        <div>
-            <Icon name="요리1" time="시간1" explanation="설명1"/>
-            <Icon name="요리2" time="시간2" explanation="설명2"/>
+        <div className="container"> {/* container 클래스 추가 */}
+            {recipes.map((recipe) => (
+                <Icon key={recipe.recipe_id} recipe={recipe} />
+            ))}
         </div>
     );
 }
 
-function Icon({name, time, explanation}){
-    return(
-        <div className="icon">
-            <h4>{name}</h4>
-            <p>{time}</p>
-            <p>{explanation}</p>
-        </div>
+function Icon({ recipe }) {
+    const navigate = useNavigate();
+
+    return (
+        <span className="icon" 
+            onClick={() => {
+                navigate("./recipe", { state: { recipeId: recipe.recipe_id } }); // recipeId만 전달
+            }}
+        >
+            <h4>{recipe.name}</h4>
+        </span>
     );
 }
 
