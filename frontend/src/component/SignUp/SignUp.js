@@ -69,6 +69,7 @@ function SignUp() {
                 value={password}
                 onChange={(e) => setPassword(e.currentTarget.value)}
             />
+            <label>선호도 조사</label>
             <div className="rating-container">
                 {recipes.slice(0, 10).map((recipe, index) => (
                     <div key={index} className="recipe-rating">
@@ -82,7 +83,7 @@ function SignUp() {
                                 value={ratings[index] === null ? "" : ratings[index]}
                                 onChange={(e) => handleRatingChange(index, parseInt(e.target.value))}
                             >
-                                <option value={null}>선호도 조사</option>
+                                <option value={null}>선호도 선택</option>
                                 {[0, 1, 2, 3, 4, 5].map(value => (
                                     <option key={value} value={value}>
                                         {value}
