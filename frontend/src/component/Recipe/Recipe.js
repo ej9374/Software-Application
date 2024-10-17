@@ -43,7 +43,7 @@ function Recommend({ recipe }) {
 
     return (
         <div>
-            <h3>추천 레시피</h3>
+            <h3>유사한 레시피</h3>
             <div className="recommendations">
                 {recipes.map((rec) => (
                     <Icon key={rec.recipe_id} recipe={rec} />
