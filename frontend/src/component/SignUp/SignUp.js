@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import './SignUp.css';
 import dummy from "../../DB/data.json";
 
@@ -7,6 +8,7 @@ function SignUp() {
     const [id, setId] = useState("");
     const [password, setPassword] = useState("");
     const [ratings, setRatings] = useState(Array(10).fill(""));
+    const navigate = useNavigate();
 
     useEffect(() => {
         // JSON 데이터에서 레시피를 가져와 상태에 설정
@@ -22,6 +24,7 @@ function SignUp() {
     const handleSubmit = () => {
         alert("회원가입이 완료되었습니다.");
         // submitRatings(); // 평점 전송 함수 호출 (주석 처리)
+        navigate("/login");
     };
 
     // 평점 데이터 전송 - 프로토타입에서는 생략
