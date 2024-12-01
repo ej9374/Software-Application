@@ -1,20 +1,45 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import dummy from "../../DB/data.json";
-import './Home.css';
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import "./Home.css";
 
 function Home() {
     const [recipes, setRecipes] = useState([]);
+    const navigate = useNavigate();
 
     useEffect(() => {
-        // JSON 데이터에서 레시피를 가져와 상태에 설정
-        setRecipes(dummy);
+        const fetchRecipes = async () => {
+            try {
+                // 백엔드에서 레시피 데이터를 가져오기
+                const response = await fetch("/api/recipes/list", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify([]), // 빈 리스트를 전송하면 백엔드가 기본값으로 처리
+                });
+
+                if (!response.ok) {
+                    throw new Error("Failed to fetch recipes");
+                }
+
+                const data = await response.json();
+                setRecipes(data); // 상태에 데이터 설정
+            } catch (error) {
+                console.error("Failed to fetch recipes:", error);
+            }
+        };
+
+        fetchRecipes();
     }, []);
 
+    if (recipes.length === 0) {
+        return <div>Loading...</div>;
+    }
+
     return (
-        <div className="container"> {/* container 클래스 추가 */}
+        <div className="container">
             {recipes.map((recipe) => (
-                <Icon key={recipe.recipe_id} recipe={recipe} />
+                <Icon key={recipe.recipeId} recipe={recipe} />
             ))}
         </div>
     );
@@ -24,12 +49,14 @@ function Icon({ recipe }) {
     const navigate = useNavigate();
 
     return (
-        <span className="icon" 
+        <span
+            className="icon"
             onClick={() => {
-                navigate("./recipe", { state: { recipeId: recipe.recipe_id } }); // recipeId만 전달
+                navigate("/recipe", { state: { recipeId: recipe.recipeId } }); // recipeId 전달
             }}
         >
             <h4>{recipe.name}</h4>
+            <p>Time: {recipe.minutes} minutes</p>
         </span>
     );
 }

@@ -1,21 +1,31 @@
 import React, { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import dummy from "../../DB/data.json";
-import dummy2 from "../../DB/recommend.json";
 import './Recipe.css';
+import dummy2 from "../../DB/recommend.json";
 
 function Recipe() {
     const { state } = useLocation();
     const { recipeId } = state || {};
+    const [recipe, setRecipe] = useState(null);
 
-    if (!recipeId) {
-        return <div>Loading...</div>;
-    }
+    useEffect(() => {
+        if (!recipeId) return;
 
-    const recipe = dummy.find(item => item.recipe_id === recipeId);
+        const fetchRecipeDetails = async () => {
+            try {
+                const response = await fetch(`/api/recipes/${recipeId}`);
+                const data = await response.json();
+                setRecipe(data);
+            } catch (error) {
+                console.error("Failed to fetch recipe details:", error);
+            }
+        };
+
+        fetchRecipeDetails();
+    }, [recipeId]);
 
     if (!recipe) {
-        return <div>레시피를 찾을 수 없습니다.</div>;
+        return <div>Loading...</div>;
     }
 
     return (
@@ -25,11 +35,12 @@ function Recipe() {
                 <p>Time: {recipe.minutes} minutes</p>
                 <p>Description: {recipe.description}</p>
                 <p>Tags: {recipe.tags}</p>
-                <p>Cooking Steps: {recipe.steps}</p>
+                <p>Nutrition: {recipe.nutrition}</p>
+                <p>Steps: {recipe.steps}</p>
                 <p>Ingredients: {recipe.ingredients}</p>
+                <p>Number of Ingredients: {recipe.nIngredients}</p>
             </div>
             <Rating recipeId={recipeId} />
-            <Recommend recipe={recipe} />
         </div>
     );
 }
@@ -75,37 +86,67 @@ function Rating({ recipeId }) {
     );
 }
 
-function Recommend({ recipe }) {
+function Recommend({ recipeId }) {
     const [recipes, setRecipes] = useState([]);
+    const navigate = useNavigate();
 
     useEffect(() => {
-        setRecipes(dummy2);
-    }, []);
+        const fetchRecommendedRecipes = async () => {
+            try {
+                // 백엔드에서 유사한 레시피 가져오기
+                const response = await fetch(`/api/recipes/home`, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({ recipeId }), // 현재 레시피 ID를 전송
+                });
+
+                if (!response.ok) {
+                    throw new Error("Failed to fetch recommended recipes");
+                }
+
+                const data = await response.json();
+                setRecipes(data); // 상태에 추천 레시피 설정
+            } catch (error) {
+                console.error("Failed to fetch recommended recipes:", error);
+            }
+        };
+
+        if (recipeId) {
+            fetchRecommendedRecipes();
+        }
+    }, [recipeId]);
+
+    if (recipes.length === 0) {
+        return <div>Loading recommendations...</div>;
+    }
 
     return (
         <div>
             <h3>유사한 레시피</h3>
             <div className="recommendations">
                 {recipes.map((rec) => (
-                    <Icon key={rec.recipe_id} recipe={rec} />
+                    <Icon key={rec.recipeId} recipe={rec} navigate={navigate} />
                 ))}
             </div>
         </div>
     );
 }
 
-function Icon({ recipe }) {
-    const navigate = useNavigate();
-
+function Icon({ recipe, navigate }) {
     return (
-        <span className="icon" 
+        <span
+            className="icon"
             onClick={() => {
-                navigate("/recipe", { state: { recipeId: recipe.recipe_id } });
+                navigate("/recipe", { state: { recipeId: recipe.recipeId } });
             }}
         >
             <h4>{recipe.name}</h4>
+            <p>Time: {recipe.minutes} minutes</p>
         </span>
     );
 }
+
 
 export default Recipe;

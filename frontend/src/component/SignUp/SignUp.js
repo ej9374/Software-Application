@@ -23,22 +23,22 @@ function SignUp() {
 
     const handleSubmit = () => {
         alert("회원가입이 완료되었습니다.");
-        // submitRatings(); // 평점 전송 함수 호출 (주석 처리)
+        submitRatings(); // 평점 전송 함수 호출 (주석 처리)
         navigate("/login");
     };
 
     // 평점 데이터 전송 - 프로토타입에서는 생략
-    /*
+    
     const submitRatings = () => {
-        // 예시 URL - 실제 서버 URL로 대체
-        const serverUrl = 'https://your-server-url.com/submit-ratings';
-
+        // 서버 URL: 프록시 설정 덕분에 상대 경로로 충분
+        const serverUrl = '/api/signup';
+    
         // 평점 데이터 준비
         const ratingData = recipes.map((recipe, index) => ({
             recipe_id: recipe.recipe_id,
             rating: ratings[index],
         }));
-
+    
         // 서버에 평점 데이터 전송
         fetch(serverUrl, {
             method: 'POST',
@@ -47,16 +47,17 @@ function SignUp() {
             },
             body: JSON.stringify({ user_id: id, password: password, ratings: ratingData }),
         })
-        .then(response => response.json())
-        .then(data => {
-            console.log('서버 응답:', data);
-            // 성공적인 응답 처리
-        })
-        .catch(error => {
-            console.error('평점 전송 중 오류 발생:', error);
-        });
+            .then(response => response.json())
+            .then(data => {
+                console.log('서버 응답:', data);
+                // 성공적인 응답 처리
+            })
+            .catch(error => {
+                console.error('평점 전송 중 오류 발생:', error);
+            });
     };
-    */
+    
+    
 
     return (
         <div className="signup-container">
