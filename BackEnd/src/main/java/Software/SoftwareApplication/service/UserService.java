@@ -1,8 +1,5 @@
 package Software.SoftwareApplication.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import Software.SoftwareApplication.dto.SignUpRequestDto;
 import Software.SoftwareApplication.dto.RatingDto;
 import Software.SoftwareApplication.entity.UserEntity;
@@ -10,6 +7,9 @@ import Software.SoftwareApplication.entity.UserRatingsEntity;
 import Software.SoftwareApplication.entity.UserRatingsId;
 import Software.SoftwareApplication.repository.UserRepository;
 import Software.SoftwareApplication.repository.RatingRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class UserService {
@@ -26,8 +26,11 @@ public class UserService {
     @Transactional
     public void registerUser(SignUpRequestDto request) {
         // 사용자 정보 저장
-        UserEntity userEntity = new UserEntity(null, request.getId(), request.getPassword());
-        userEntity = userRepository.save(userEntity);  // User를 먼저 저장하여 ID 생성
+        UserEntity userEntity = userRepository.findById(request.getUser_id());
+        if (userEntity == null) {
+            userEntity = new UserEntity(request.getUser_id(), request.getPassword());
+            userEntity = userRepository.save(userEntity);  // 새로운 사용자 저장
+        }
 
         // 평점 정보 저장
         for (RatingDto ratingDto : request.getRatings()) {

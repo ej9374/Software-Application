@@ -9,9 +9,7 @@ public class RatingDto {
     private Long recipeId;
     private Integer rating;
 
-    public RatingDto(){}
-
-    public RatingDto(Long recipeId, Integer rating){
+    public RatingDto(Long recipeId, Integer rating) {
         this.recipeId = recipeId;
         this.rating = rating;
     }

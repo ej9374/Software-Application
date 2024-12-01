@@ -19,9 +19,9 @@ public class UserRatingsId implements Serializable {
     private Long recipeId;
 
     @Column(name = "user_id")
-    private Long userId;
+    private int userId;
 
-    public UserRatingsId(Long recipeId, Long userId) {
+    public UserRatingsId(Long recipeId, int userId) {
         this.recipeId = recipeId;
         this.userId = userId;
     }
