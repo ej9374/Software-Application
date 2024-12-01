@@ -86,64 +86,36 @@ function Rating({ recipeId }) {
     );
 }
 
-function Recommend({ recipeId }) {
+
+function Recommend({ recipe }) {
     const [recipes, setRecipes] = useState([]);
-    const navigate = useNavigate();
 
     useEffect(() => {
-        const fetchRecommendedRecipes = async () => {
-            try {
-                // 백엔드에서 유사한 레시피 가져오기
-                const response = await fetch(`/api/recipes/home`, {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify({ recipeId }), // 현재 레시피 ID를 전송
-                });
-
-                if (!response.ok) {
-                    throw new Error("Failed to fetch recommended recipes");
-                }
-
-                const data = await response.json();
-                setRecipes(data); // 상태에 추천 레시피 설정
-            } catch (error) {
-                console.error("Failed to fetch recommended recipes:", error);
-            }
-        };
-
-        if (recipeId) {
-            fetchRecommendedRecipes();
-        }
-    }, [recipeId]);
-
-    if (recipes.length === 0) {
-        return <div>Loading recommendations...</div>;
-    }
+        setRecipes(dummy2);
+    }, []);
 
     return (
         <div>
             <h3>유사한 레시피</h3>
             <div className="recommendations">
                 {recipes.map((rec) => (
-                    <Icon key={rec.recipeId} recipe={rec} navigate={navigate} />
+                    <Icon key={rec.recipe_id} recipe={rec} />
                 ))}
             </div>
         </div>
     );
 }
 
-function Icon({ recipe, navigate }) {
+function Icon({ recipe }) {
+    const navigate = useNavigate();
+
     return (
-        <span
-            className="icon"
+        <span className="icon" 
             onClick={() => {
-                navigate("/recipe", { state: { recipeId: recipe.recipeId } });
+                navigate("/recipe", { state: { recipeId: recipe.recipe_id } });
             }}
         >
             <h4>{recipe.name}</h4>
-            <p>Time: {recipe.minutes} minutes</p>
         </span>
     );
 }
