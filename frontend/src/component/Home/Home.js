@@ -15,7 +15,7 @@ function Home() {
                 const userId = 1; 
 
                 // 백엔드에서 레시피 데이터를 가져오기
-                const response = await fetch("/api/recipes/home", {
+                const response = await fetch("/api/home", {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json",
