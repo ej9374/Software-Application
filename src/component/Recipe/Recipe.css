@@ -1,0 +1,214 @@
+.recipe-page {
+    max-width: 800px; /* 중앙에 정렬되도록 최대 폭 설정 */
+    margin: 0 auto; /* 화면 중앙 정렬 */
+    padding: 20px;
+    font-family: Arial, sans-serif;
+    color: #333;
+    line-height: 1.6;
+    background-color: #fff;
+    border-radius: 12px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* 가벼운 그림자 추가 */
+}
+
+.recipe-header {
+    text-align: center; /* 텍스트 가운데 정렬 */
+    margin-bottom: 20px;
+}
+
+.recipe-header h1 {
+    font-size: 2.4em;
+    margin-bottom: 8px;
+    color: #007bff; /* 강조 색상 */
+}
+
+.recipe-time {
+    font-size: 1.2em;
+    color: #666;
+    margin-top: 8px;
+}
+
+.recipe-content section {
+    margin-bottom: 24px;
+}
+
+.recipe-content h2 {
+    font-size: 1.8em;
+    color: #333;
+    margin-bottom: 12px;
+    border-bottom: 2px solid #ddd; /* 제목 하단에 라인 추가 */
+    padding-bottom: 4px;
+}
+
+.recipe-tags ul,
+.recipe-ingredients ul {
+    list-style-type: none; /* 기본 불릿 제거 */
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap; /* 태그를 여러 줄로 표시 */
+    gap: 8px; /* 태그 간 간격 */
+}
+
+.recipe-tags li,
+.recipe-ingredients li {
+    background-color: #eaf4fe;
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 0.9em;
+    color: #007bff;
+}
+
+.recipe-steps ol {
+    padding-left: 20px; /* 번호 목록 간격 */
+    list-style-position: inside; /* 번호를 안쪽으로 */
+    line-height: 1.8; /* 줄 간격 증가 */
+}
+
+.recipe-nutrition {
+    display: flex;
+    flex-direction: column;
+    gap: 4px; /* 항목 간 간격 */
+}
+
+.recipe-ingredients ul {
+    display: grid; /* 그리드 레이아웃 */
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 10px;
+}
+
+/* 반응형 스타일 */
+@media (max-width: 768px) {
+    .recipe-page {
+        padding: 16px;
+        box-shadow: none; /* 작은 화면에서 그림자 제거 */
+    }
+
+    .recipe-tags ul,
+    .recipe-ingredients ul {
+        flex-direction: column; /* 작은 화면에서는 수직으로 표시 */
+    }
+}
+
+.rating-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 16px; /* 내부 여백 줄이기 */
+    margin: 20px auto;
+    border: 1px solid #ddd; /* 테두리 두께 줄이기 */
+    border-radius: 8px; /* 테두리 둥근 정도 줄이기 */
+    background-color: #f9f9f9;
+    max-width: 300px; /* 박스 최대 너비를 줄임 */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* 그림자 크기 줄이기 */
+}
+
+.rating-container h3 {
+    margin-bottom: 12px; /* 제목 아래 여백 줄이기 */
+    font-size: 20px; /* 제목 크기 줄이기 */
+    color: #007bff;
+}
+
+.rating-buttons {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px; /* 버튼 간격 줄이기 */
+    margin-top: 8px;
+    margin-bottom: 16px;
+}
+
+.rating-buttons button {
+    width: 40px; /* 버튼 크기 줄이기 */
+    height: 40px;
+    font-size: 16px; /* 버튼 내부 글씨 크기 줄이기 */
+    border: 2px solid #333;
+    border-radius: 50%;
+    background-color: #f0f0f0;
+    cursor: pointer;
+    transition: background-color 0.2s, transform 0.2s;
+}
+
+.rating-buttons button.selected {
+    background-color: #ffcc00;
+    transform: scale(1.2);
+}
+
+.rating-buttons button:hover:not(.selected) {
+    background-color: #e0e0e0;
+}
+
+.submit-rating {
+    margin-top: 12px;
+    padding: 8px 16px; /* 버튼 크기 줄이기 */
+    font-size: 16px; /* 버튼 글씨 크기 줄이기 */
+    border: none;
+    border-radius: 6px;
+    background-color: #007bff;
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.submit-rating:hover {
+    background-color: #0056b3;
+}
+
+.submit-rating:disabled {
+    background-color: #cccccc;
+    color: #666;
+    cursor: not-allowed;
+}
+
+/* 추천 섹션 */
+.recommend-section {
+    margin: 20px auto;
+    text-align: center;
+}
+
+.recommend-section h3 {
+    font-size: 1.8em;
+    margin-bottom: 16px;
+    color: #333;
+}
+
+/* 추천 레시피 리스트 */
+.recommendations {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+/* 추천 레시피 카드 */
+.recommend-icon {
+    width: 180px;
+    height: 150px;
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.recommend-icon:hover {
+    transform: scale(1.05);
+    box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
+}
+
+.recommend-icon h4 {
+    font-size: 1.2em;
+    margin: 8px 0;
+    color: #007bff;
+}
+
+.recommend-icon p {
+    font-size: 0.9em;
+    color: #555;
+}
