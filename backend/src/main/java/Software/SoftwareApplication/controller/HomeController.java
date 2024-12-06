@@ -1,5 +1,6 @@
 package Software.SoftwareApplication.controller;
 
+import Software.SoftwareApplication.dto.HomeRequestDto;
 import Software.SoftwareApplication.dto.HomeResponseDto;
 import Software.SoftwareApplication.service.HomeService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +15,8 @@ public class HomeController {
 
     private final HomeService homeService;
 
+
+
     @Autowired
     public HomeController(HomeService homeService) {
         this.homeService = homeService;
@@ -24,4 +27,7 @@ public class HomeController {
         List<HomeResponseDto> recipes = homeService.getHomeRecipes(userId);
         return ResponseEntity.status(HttpStatus.OK).body(recipes);
     }
+
+
+
 }

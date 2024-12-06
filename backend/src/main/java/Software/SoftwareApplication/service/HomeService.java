@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class HomeService {
@@ -58,11 +59,22 @@ public class HomeService {
             Integer newUserId = existingUserRepository.findByUserId(userId).getNewUserId();
 
             // Flask 서버에서 추천된 newRecipeIds 가져오기
-            List<Integer> recommendedIds = flaskApiClient.getRecommendations(newUserId);
+            List<List<Integer>> recommendedIds = flaskApiClient.getRecommendations(newUserId);
 
-            // 추천된 newRecipeIds를 기반으로 매칭된 recipeIds 가져오기
+            // 추천된 newRecipeIds에서 첫 번째 값을 MatchRecipeEntity의 newRecipeId로 취급
             if (recommendedIds != null && !recommendedIds.isEmpty()) {
-                recipeIds = matchRecipeRepository.getRecipeIdsByNewRecipeIds(recommendedIds);
+                List<Integer> newRecipeIds = recommendedIds.stream()
+                        .filter(recommendedId -> recommendedId != null && !recommendedId.isEmpty())
+                        .map(recommendedId -> recommendedId.get(0)) // 첫 번째 값만 사용
+                        .collect(Collectors.toList());
+
+                logger.debug("New Recipe IDs from Flask: {}", newRecipeIds);
+
+                // MatchRecipeEntity에서 recipeId를 찾아 매핑
+                if (!newRecipeIds.isEmpty()) {
+                    recipeIds = matchRecipeRepository.getRecipeIdsByNewRecipeIds(newRecipeIds);
+                    logger.debug("Matched Recipe IDs: {}", recipeIds);
+                }
             }
         } catch (Exception e) {
             logger.error("Failed to fetch recommendations from Flask server for userId: {}", userId, e);
