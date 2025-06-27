@@ -1,3 +1,0 @@
-exitUser.csv --> user data의 userId를 연속된 정수로 재부여
-test.csv --> DATA_RAW_interactions의 userId와 recipeId를 연속된 정수로 재부
-RAW_recipe.csv --> recipe 정보
