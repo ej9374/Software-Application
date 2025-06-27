@@ -52,7 +52,8 @@ public class RecipeService {
             recommendedRecipes.add(recommendations.getForth());
         }
         if (recommendations.getFifth() != null) {
-            recommendedRecipes.add(recommendations.getFifth());
+            recommendedRecipes.
+                    add(recommendations.getFifth());
         }
 
         System.out.println("Recommended recipes: " + recommendedRecipes);
