@@ -9,6 +9,13 @@
     <value-preview-text-wrapping value="false" />
     <value-preview-pinned value="false" />
   </component>
+  <component name="DBNavigator.Project.DatabaseAssistantManager">
+    <assistants>
+      <assistant-state connection-id="3ec879ff-ccba-41d8-8f04-accdeea2079a" default-profile-name="" selected-profile-name="" selected-model-name="" assistant-type="GENERIC" selected-action="SHOW_SQL" availability="UNAVAILABLE" acknowledgement="NONE">
+        <messages />
+      </assistant-state>
+    </assistants>
+  </component>
   <component name="DBNavigator.Project.DatabaseBrowserManager">
     <autoscroll-to-editor value="false" />
     <autoscroll-from-editor value="true" />
@@ -68,7 +75,10 @@ select * from user;]]></console>
           <tns-profile value="" />
           <type value="USER_PASSWORD" />
           <user value="root" />
-          <deprecated-pwd value="cm9vdA==" />
+          <token-type value="" />
+          <token-config-file value="" />
+          <token-profile value="" />
+          <session-user value="root@localhost" />
         </database>
         <properties>
           <auto-commit value="false" />
@@ -78,10 +88,8 @@ select * from user;]]></console>
           <proxy-host value="" />
           <proxy-port value="22" />
           <proxy-user value="" />
-          <deprecated-proxy-pwd value="" />
           <auth-type value="PASSWORD" />
           <key-file value="" />
-          <key-passphrase value="" />
         </ssh-settings>
         <ssl-settings>
           <active value="false" />
@@ -138,9 +146,15 @@ select * from user;]]></console>
             <object-type name="TYPE" enabled="true" />
             <object-type name="TYPE_ATTRIBUTE" enabled="true" />
             <object-type name="ARGUMENT" enabled="true" />
+            <object-type name="JAVA_CLASS" enabled="true" />
+            <object-type name="JAVA_INNER_CLASS" enabled="true" />
+            <object-type name="JAVA_FIELD" enabled="true" />
+            <object-type name="JAVA_METHOD" enabled="true" />
             <object-type name="DIMENSION" enabled="true" />
             <object-type name="CLUSTER" enabled="true" />
             <object-type name="DBLINK" enabled="true" />
+            <object-type name="CREDENTIAL" enabled="true" />
+            <object-type name="AI_PROFILE" enabled="true" />
           </object-type-filter>
         </object-filters>
       </connection>
@@ -162,7 +176,10 @@ select * from user;]]></console>
           <tns-profile value="" />
           <type value="USER_PASSWORD" />
           <user value="root" />
-          <deprecated-pwd value="cm9vdA==" />
+          <token-type value="" />
+          <token-config-file value="" />
+          <token-profile value="" />
+          <session-user value="" />
         </database>
         <properties>
           <auto-commit value="false" />
@@ -172,10 +189,8 @@ select * from user;]]></console>
           <proxy-host value="" />
           <proxy-port value="22" />
           <proxy-user value="" />
-          <deprecated-proxy-pwd value="" />
           <auth-type value="PASSWORD" />
           <key-file value="" />
-          <key-passphrase value="" />
         </ssh-settings>
         <ssl-settings>
           <active value="false" />
@@ -232,9 +247,15 @@ select * from user;]]></console>
             <object-type name="TYPE" enabled="true" />
             <object-type name="TYPE_ATTRIBUTE" enabled="true" />
             <object-type name="ARGUMENT" enabled="true" />
+            <object-type name="JAVA_CLASS" enabled="true" />
+            <object-type name="JAVA_INNER_CLASS" enabled="true" />
+            <object-type name="JAVA_FIELD" enabled="true" />
+            <object-type name="JAVA_METHOD" enabled="true" />
             <object-type name="DIMENSION" enabled="true" />
             <object-type name="CLUSTER" enabled="true" />
             <object-type name="DBLINK" enabled="true" />
+            <object-type name="CREDENTIAL" enabled="true" />
+            <object-type name="AI_PROFILE" enabled="true" />
           </object-type-filter>
         </object-filters>
       </connection>
@@ -270,9 +291,15 @@ select * from user;]]></console>
           <object-type name="TYPE" enabled="true" />
           <object-type name="TYPE_ATTRIBUTE" enabled="true" />
           <object-type name="ARGUMENT" enabled="true" />
+          <object-type name="JAVA_CLASS" enabled="true" />
+          <object-type name="JAVA_INNER_CLASS" enabled="true" />
+          <object-type name="JAVA_FIELD" enabled="true" />
+          <object-type name="JAVA_METHOD" enabled="true" />
           <object-type name="DIMENSION" enabled="true" />
           <object-type name="CLUSTER" enabled="true" />
           <object-type name="DBLINK" enabled="true" />
+          <object-type name="CREDENTIAL" enabled="true" />
+          <object-type name="AI_PROFILE" enabled="true" />
         </object-type-filter>
       </filters>
       <sorting>
@@ -309,9 +336,15 @@ select * from user;]]></console>
           <object-type name="FUNCTION" enabled="true" />
           <object-type name="PACKAGE" enabled="true" />
           <object-type name="TYPE" enabled="true" />
+          <object-type name="JAVA CLASS" enabled="true" />
+          <object-type name="INNER CLASS" enabled="true" />
+          <object-type name="JAVA FIELD" enabled="true" />
+          <object-type name="JAVA METHOD" enabled="true" />
+          <object-type name="JAVA PARAMETER" enabled="true" />
           <object-type name="DIMENSION" enabled="false" />
           <object-type name="CLUSTER" enabled="false" />
           <object-type name="DBLINK" enabled="true" />
+          <object-type name="CREDENTIAL" enabled="false" />
         </lookup-objects>
         <force-database-load value="false" />
         <prompt-connection-selection value="true" />
@@ -365,12 +398,19 @@ select * from user;]]></console>
           <content-type name="DTD" enabled="true" />
           <content-type name="HTML" enabled="true" />
           <content-type name="XHTML" enabled="true" />
+          <content-type name="CSS" enabled="true" />
           <content-type name="Java" enabled="true" />
           <content-type name="SQL" enabled="true" />
           <content-type name="PL/SQL" enabled="true" />
+          <content-type name="JPA QL" enabled="true" />
+          <content-type name="JavaScript" enabled="true" />
           <content-type name="JSON" enabled="true" />
           <content-type name="JSON5" enabled="true" />
+          <content-type name="JSP" enabled="true" />
+          <content-type name="JSPx" enabled="true" />
           <content-type name="Groovy" enabled="true" />
+          <content-type name="FTL" enabled="true" />
+          <content-type name="VTL" enabled="true" />
           <content-type name="YAML" enabled="true" />
           <content-type name="Manifest" enabled="true" />
         </content-types>
@@ -601,6 +641,7 @@ select * from user;]]></console>
         <mapping file-type-id="TYPE" extensions="tpe" />
         <mapping file-type-id="TYPE_SPEC" extensions="tps" />
         <mapping file-type-id="TYPE_BODY" extensions="tpb" />
+        <mapping file-type-id="JAVA_SOURCE" extensions="sql" />
       </extensions>
       <general>
         <lookup-ddl-files value="true" />
@@ -610,6 +651,11 @@ select * from user;]]></console>
         <make-scripts-rerunnable value="true" />
       </general>
     </ddl-file-settings>
+    <assistant-settings>
+      <credential-settings>
+        <credentials />
+      </credential-settings>
+    </assistant-settings>
     <general-settings>
       <regional-settings>
         <date-format value="MEDIUM" />
