@@ -16,7 +16,6 @@ public class HomeController {
     private final HomeService homeService;
 
 
-
     @Autowired
     public HomeController(HomeService homeService) {
         this.homeService = homeService;

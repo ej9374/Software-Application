@@ -5,6 +5,7 @@ import Software.SoftwareApplication.dto.DetailedRecipeResponseDto;
 import Software.SoftwareApplication.dto.HomeResponseDto;
 import Software.SoftwareApplication.dto.SignUpRecipeResponseDto;
 import Software.SoftwareApplication.service.RecipeService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,21 +15,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-@CrossOrigin(origins = "http://localhost:3000") // React의 주소
+@RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/recipes")
 public class RecipeController {
 
-    @Autowired
     private final RecipeService recipeService;
-
-    @Autowired
-    private FlaskApiClient flaskApiClient; // Flask API 클라이언트 주입
-
-
-    public RecipeController(RecipeService recipeService) {
-        this.recipeService = recipeService;
-    }
 
     @PostMapping("/list")
     public ResponseEntity<List<HomeResponseDto>> getSimilarRecipes(@RequestBody Map<String, Long> request) {

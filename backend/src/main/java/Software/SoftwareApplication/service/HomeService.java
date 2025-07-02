@@ -4,6 +4,9 @@ import Software.SoftwareApplication.api.FlaskApiClient;
 import Software.SoftwareApplication.dto.HomeResponseDto;
 import Software.SoftwareApplication.repository.ExistingUserRepository;
 import Software.SoftwareApplication.repository.MatchRecipeRepository;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import lombok.extern.slf4j.XSlf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -12,25 +15,16 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@RequiredArgsConstructor
 @Service
+@Slf4j
 public class HomeService {
-
-    private static final Logger logger = LoggerFactory.getLogger(HomeService.class);
 
     private final ExistingUserRepository existingUserRepository;
     private final MatchRecipeRepository matchRecipeRepository;
     private final FlaskApiClient flaskApiClient;
     private final RecipeService recipeService;
 
-    public HomeService(ExistingUserRepository existingUserRepository,
-                       MatchRecipeRepository matchRecipeRepository,
-                       FlaskApiClient flaskApiClient,
-                       RecipeService recipeService) {
-        this.existingUserRepository = existingUserRepository;
-        this.matchRecipeRepository = matchRecipeRepository;
-        this.flaskApiClient = flaskApiClient;
-        this.recipeService = recipeService;
-    }
 
     /**
      * 사용자 ID를 기반으로 추천된 레시피 목록을 반환합니다.
@@ -68,22 +62,22 @@ public class HomeService {
                         .map(recommendedId -> recommendedId.get(0)) // 첫 번째 값만 사용
                         .collect(Collectors.toList());
 
-                logger.debug("New Recipe IDs from Flask: {}", newRecipeIds);
+                log.debug("New Recipe IDs from Flask: {}", newRecipeIds);
 
                 // MatchRecipeEntity에서 recipeId를 찾아 매핑
                 if (!newRecipeIds.isEmpty()) {
                     recipeIds = matchRecipeRepository.getRecipeIdsByNewRecipeIds(newRecipeIds);
-                    logger.debug("Matched Recipe IDs: {}", recipeIds);
+                    log.debug("Matched Recipe IDs: {}", recipeIds);
                 }
             }
         } catch (Exception e) {
-            logger.error("Failed to fetch recommendations from Flask server for userId: {}", userId, e);
+            log.error("Failed to fetch recommendations from Flask server for userId: {}", userId, e);
         }
 
         // 추천 결과가 없을 경우 기본값 설정
         if (recipeIds.isEmpty()) {
             recipeIds = List.of(137739L, 31490L, 112140L, 59389L, 44061L, 5289L, 25274L, 67888L, 70971L, 75452L);
-            logger.warn("No recommendations found for userId: {}. Using default recommendations.", userId);
+            log.warn("No recommendations found for userId: {}. Using default recommendations.", userId);
         }
 
         return recipeIds;

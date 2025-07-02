@@ -5,26 +5,25 @@ import Software.SoftwareApplication.dto.HomeResponseDto;
 import Software.SoftwareApplication.dto.SignUpRecipeResponseDto;
 import Software.SoftwareApplication.entity.RecommendationsEntity;
 import Software.SoftwareApplication.entity.RecipeEntity;
+import Software.SoftwareApplication.entity.SignUpRecipeEntity;
 import Software.SoftwareApplication.repository.RecommendationsRepository;
 import Software.SoftwareApplication.repository.RecipeRepository;
+import Software.SoftwareApplication.repository.SignUpRecipeRepository;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.Random;
+import java.util.*;
 import java.util.stream.Collectors;
 
+@RequiredArgsConstructor
+@Slf4j
 @Service
 public class RecipeService {
 
     private final RecipeRepository recipeRepository;
     private final RecommendationsRepository recommendationsRepository;
-
-    public RecipeService(RecipeRepository recipeRepository, RecommendationsRepository recommendationsRepository) {
-        this.recipeRepository = recipeRepository;
-        this.recommendationsRepository = recommendationsRepository;
-    }
+    private final SignUpRecipeRepository signUpRecipeRepository;
 
     /**
      * 특정 recipeId를 기반으로 추천 레시피 정보를 반환합니다.
@@ -100,21 +99,20 @@ public class RecipeService {
         );
     }
 
+
+
     /**
-     * 랜덤으로 10개의 레시피를 반환합니다. (회원가입 시 활용)
+     * 랜덤으로 10개의 레시피를 반환합니다. (회원가입 시 활용) ->  SignUpRecipeEntity에서 랜덤으로 10개뽑아서 띄워야됨!
      */
     public List<SignUpRecipeResponseDto> getRandomRecipesForSignUp() {
-        List<Long> allRecipeIds = recipeRepository.findAllIds(); // 모든 Recipe ID를 가져옵니다.
-        Random random = new Random();
+        List<RecipeEntity> allRecipes = signUpRecipeRepository.findAllIds(); // 모든 Recipe ID를 가져옵니다.
 
-        // 중복되지 않게 10개의 랜덤 ID를 선택
-        return random.ints(0, allRecipeIds.size())
-                .distinct()
-                .limit(10)
-                .mapToObj(allRecipeIds::get)
-                .map(recipeRepository::findById) // ID로 RecipeEntity 조회
-                .filter(Optional::isPresent) // 존재하는 RecipeEntity만 필터링
-                .map(Optional::get)
+        //랜덤하게 섞고 그중 10개 추출
+        Collections.shuffle(allRecipes);
+
+        List<RecipeEntity> selected = allRecipes.subList(0, 10);
+
+        return selected.stream()
                 .map(recipe -> new SignUpRecipeResponseDto(
                         recipe.getRecipeId(),
                         recipe.getName(),

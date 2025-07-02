@@ -12,4 +12,6 @@ public interface RecipeRepository extends JpaRepository<RecipeEntity, Long> {
     // 모든 Recipe ID를 반환하는 메서드
     @Query("SELECT r.recipeId FROM RecipeEntity r")
     List<Long> findAllIds();
+
+    RecipeEntity findByRecipeId(Long recipeId);
 }

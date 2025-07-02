@@ -2,15 +2,17 @@ package Software.SoftwareApplication.service;
 
 import Software.SoftwareApplication.dto.SignUpRequestDto;
 import Software.SoftwareApplication.dto.RatingDto;
+import Software.SoftwareApplication.entity.RecipeEntity;
 import Software.SoftwareApplication.entity.UserEntity;
 import Software.SoftwareApplication.entity.UserRatingsEntity;
-import Software.SoftwareApplication.entity.UserRatingsId;
-import Software.SoftwareApplication.repository.ExistingUserRepository;
-import Software.SoftwareApplication.repository.UserRepository;
-import Software.SoftwareApplication.repository.RatingRepository;
+import Software.SoftwareApplication.global.exception.base.CustomException;
+import Software.SoftwareApplication.global.exception.base.ErrorCode;
+import Software.SoftwareApplication.repository.*;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -21,29 +23,18 @@ import java.nio.charset.StandardCharsets;
 import java.util.Date;
 import java.util.Optional;
 
+@RequiredArgsConstructor
+@Slf4j
 @Service
 public class UserService {
 
     private final UserRepository userRepository;
-    private final RatingRepository ratingRepository;
+    private final RecipeRepository recipeRepository;
+    private final UserRatingsRepository userRatingsRepository;
     private final ExistingUserRepository existingUserRepository;
-    private final SecretKey secretKey;
 
-    @Autowired
-    public UserService(UserRepository userRepository,
-                       RatingRepository ratingRepository,
-                       ExistingUserRepository existingUserRepository,
-                       @Value("${jwt.secret}") String secret) {
-        this.userRepository = userRepository;
-        this.ratingRepository = ratingRepository;
-        this.existingUserRepository = existingUserRepository;
-
-        // JWT 비밀 키 초기화
-        if (secret == null || secret.length() < 32) {
-            throw new IllegalArgumentException("JWT 비밀 키는 최소 32바이트 이상이어야 합니다.");
-        }
-        this.secretKey = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
-    }
+    @Value("z{jwt.secret}")
+    private SecretKey secretKey;
 
     /**
      * 사용자 등록 메서드
@@ -51,25 +42,43 @@ public class UserService {
     @Transactional
     public void registerUser(SignUpRequestDto request) {
         // ID로 사용자 찾기
-        if (userRepository.findById(request.getId()) != null) {
-            throw new IllegalArgumentException("이미 존재하는 사용자 ID입니다.");
+        if (userRepository.findById(request.getId()).isPresent()) {
+            throw new CustomException(ErrorCode.DUPLICATE_ID);
         }
 
         // 새로운 사용자 저장
-        UserEntity userEntity = new UserEntity();
-        userEntity.setId(request.getId()); // ID 설정
-        userEntity.setPassword(request.getPassword());
-        userRepository.save(userEntity);
+        UserEntity user = new UserEntity();
+        user.setId(request.getId()); // ID 설정
+
+        // 비밀번호 해싱 필요 + jwt filter 추가
+
+        user.setPassword(request.getPassword());
+        userRepository.save(user);
+
+        // RatingDto의 RecipeId로 RecipeEntity 찾아서저장?해야됨
 
         // 평점 정보 저장
         for (RatingDto ratingDto : request.getRatings()) {
-            if (ratingDto.getRecipeId() == null || ratingDto.getRating() == null) {
-                throw new IllegalArgumentException("레시피 ID 또는 평점이 비어 있습니다.");
+
+            Long recipeId = ratingDto.getRecipeId();
+            Integer rating = ratingDto.getRating();
+
+            if (recipeId == null || rating == null) {
+                throw new CustomException(ErrorCode.NULL_RATING_VALUE);
             }
 
-            UserRatingsId userRatingsId = new UserRatingsId(ratingDto.getRecipeId(), userEntity.getUserId());
-            UserRatingsEntity userRatings = new UserRatingsEntity(userRatingsId, ratingDto.getRating());
-            ratingRepository.save(userRatings);
+            RecipeEntity recipe = recipeRepository.findByRecipeId(recipeId);
+
+            if (recipe == null)
+                throw new CustomException(ErrorCode.RECIPE_NOT_FOUND);
+
+            UserRatingsEntity userRatings = new UserRatingsEntity();
+
+            userRatings.setUser(user);
+            userRatings.setRecipe(recipe);
+            userRatings.setRating(rating);
+
+            userRatingsRepository.save(userRatings);
         }
     }
 

@@ -1,32 +1,41 @@
 package Software.SoftwareApplication.controller;
 
+import Software.SoftwareApplication.dto.SignUpRecipeResponseDto;
 import Software.SoftwareApplication.dto.SignUpRequestDto;
+import Software.SoftwareApplication.entity.SignUpRecipeEntity;
 import Software.SoftwareApplication.entity.UserEntity;
+import Software.SoftwareApplication.global.response.SuccessResponse;
+import Software.SoftwareApplication.service.RecipeService;
 import Software.SoftwareApplication.service.UserService;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Map;
 
 @RestController
+@RequiredArgsConstructor
+@Slf4j
 @RequestMapping("/api")
 public class UserController {
 
     private final UserService userService;
+    private final RecipeService recipeService;
 
-    @Autowired
-    public UserController(UserService userService) {
-        this.userService = userService;
+
+    // recipe 10개 추출해서 보내기
+    @GetMapping("/random")
+    public ResponseEntity<SuccessResponse<List<SignUpRecipeResponseDto>>> sendSignUpRecipes(){
+        return SuccessResponse.onSuccess("recipe가 성공적으로 추출되었습니다.", HttpStatus.OK, recipeService.getRandomRecipesForSignUp());
     }
 
-    /**
-     * 회원가입 처리
-     */
     @PostMapping("/signup")
-    public ResponseEntity<String> registerUser(@RequestBody SignUpRequestDto request) {
-        try {
+    public ResponseEntity<SuccessResponse<SignUpRequestDto>> registerUser(@RequestBody SignUpRequestDto request) {
+  /*      try {
             userService.registerUser(request);
             return ResponseEntity.status(HttpStatus.CREATED).body("회원가입 성공");
         } catch (IllegalArgumentException e) {
@@ -34,7 +43,9 @@ public class UserController {
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("회원가입 중 오류 발생: " + e.getMessage());
-        }
+        }*/
+        userService.registerUser(request);
+        return SuccessResponse.onSuccess("회원가입이 성공적으로 완료되었습니다.", HttpStatus.OK, request);
     }
 
     /**

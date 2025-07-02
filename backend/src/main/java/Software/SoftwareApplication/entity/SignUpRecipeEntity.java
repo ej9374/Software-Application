@@ -21,8 +21,4 @@ public class SignUpRecipeEntity {
     @JoinColumn(name = "recipe_id", referencedColumnName = "recipe_id", nullable = false) // 외래 키 매핑
     private RecipeEntity recipe;
 
-    // 추가 생성자
-    public SignUpRecipeEntity(RecipeEntity recipe) {
-        this.recipe = recipe;
-    }
 }
