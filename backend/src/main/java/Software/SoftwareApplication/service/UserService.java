@@ -7,6 +7,8 @@ import Software.SoftwareApplication.entity.UserEntity;
 import Software.SoftwareApplication.entity.UserRatingsEntity;
 import Software.SoftwareApplication.global.exception.base.CustomException;
 import Software.SoftwareApplication.global.exception.base.ErrorCode;
+import Software.SoftwareApplication.global.exception.custom.EntityNotFoundException;
+import Software.SoftwareApplication.global.security.jwt.JwtProvider;
 import Software.SoftwareApplication.repository.*;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -15,12 +17,16 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
 @RequiredArgsConstructor
@@ -28,6 +34,8 @@ import java.util.Optional;
 @Service
 public class UserService {
 
+    private final JwtProvider jwtProvider;
+    private final PasswordEncoder passwordEncoder;
     private final UserRepository userRepository;
     private final RecipeRepository recipeRepository;
     private final UserRatingsRepository userRatingsRepository;
@@ -40,22 +48,17 @@ public class UserService {
      * 사용자 등록 메서드
      */
     @Transactional
-    public void registerUser(SignUpRequestDto request) {
+    public void signUp(SignUpRequestDto request) {
         // ID로 사용자 찾기
-        if (userRepository.findById(request.getId()).isPresent()) {
-            throw new CustomException(ErrorCode.DUPLICATE_ID);
-        }
+        userRepository.findById(request.getId())
+                .orElseThrow(() -> new CustomException(ErrorCode.DUPLICATE_ID));
 
         // 새로운 사용자 저장
         UserEntity user = new UserEntity();
         user.setId(request.getId()); // ID 설정
+        user.setPassword(passwordEncoder.encode(request.getPassword())); //해싱한 비밀번호
 
-        // 비밀번호 해싱 필요 + jwt filter 추가
-
-        user.setPassword(request.getPassword());
         userRepository.save(user);
-
-        // RatingDto의 RecipeId로 RecipeEntity 찾아서저장?해야됨
 
         // 평점 정보 저장
         for (RatingDto ratingDto : request.getRatings()) {
@@ -67,10 +70,8 @@ public class UserService {
                 throw new CustomException(ErrorCode.NULL_RATING_VALUE);
             }
 
-            RecipeEntity recipe = recipeRepository.findByRecipeId(recipeId);
-
-            if (recipe == null)
-                throw new CustomException(ErrorCode.RECIPE_NOT_FOUND);
+            RecipeEntity recipe = recipeRepository.findByRecipeId(recipeId)
+                    .orElseThrow(() -> new EntityNotFoundException("recipeId", recipeId));
 
             UserRatingsEntity userRatings = new UserRatingsEntity();
 
@@ -101,31 +102,28 @@ public class UserService {
         }
     }
 
+    public Map<String, String> login(String id, String password) {
 
-    /**
-     * JWT 토큰 생성
-     */
-    public String generateToken(int userId) {
-        return Jwts.builder()
-                .setSubject(String.valueOf(userId)) // 사용자 ID를 토큰의 주체로 설정
-                .setIssuedAt(new Date()) // 토큰 발급 시간
-                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24)) // 토큰 만료 시간 (24시간)
-                .signWith(secretKey, SignatureAlgorithm.HS256) // 서명 알고리즘 및 비밀 키 설정
-                .compact();
-    }
+        UserEntity user = userRepository.findById(id)
+                .orElseThrow(() -> new CustomException(ErrorCode.INVALID_CREDENTIALS));
 
-    /**
-     * JWT 토큰 검증
-     */
-    public boolean validateToken(String token) {
-        try {
-            Jwts.parserBuilder()
-                    .setSigningKey(secretKey)
-                    .build()
-                    .parseClaimsJws(token);
-            return true; // 토큰이 유효하면 true 반환
-        } catch (Exception e) {
-            return false; // 토큰이 유효하지 않으면 false 반환
+        if (!passwordEncoder.matches(password, user.getPassword())) {
+            throw new CustomException(ErrorCode.INVALID_CREDENTIALS);
         }
+
+        //성공시 토큰 생성
+        String accessToken = jwtProvider.createAccessToken(user.getId());
+        String refreshToken = jwtProvider.createRefreshToken(user.getId());
+
+        Map<String, String> map = new HashMap<>();
+        map.put("accessToken", accessToken);
+        map.put("refreshToken", refreshToken);
+        return map;
     }
+
+    public void logout(String id) {
+
+    }
+
+
 }

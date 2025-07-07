@@ -9,11 +9,13 @@ import Software.SoftwareApplication.service.RecipeService;
 import Software.SoftwareApplication.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -34,7 +36,7 @@ public class UserController {
     }
 
     @PostMapping("/signup")
-    public ResponseEntity<SuccessResponse<SignUpRequestDto>> registerUser(@RequestBody SignUpRequestDto request) {
+    public ResponseEntity<SuccessResponse<SignUpRequestDto>> signUp(@RequestBody SignUpRequestDto request) {
   /*      try {
             userService.registerUser(request);
             return ResponseEntity.status(HttpStatus.CREATED).body("회원가입 성공");
@@ -44,44 +46,36 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("회원가입 중 오류 발생: " + e.getMessage());
         }*/
-        userService.registerUser(request);
-        return SuccessResponse.onSuccess("회원가입이 성공적으로 완료되었습니다.", HttpStatus.OK, request);
+        userService.signUp(request);
+        return SuccessResponse.onSuccess("회원가입이 성공적으로 완료되었습니다.", HttpStatus.CREATED, request);
     }
 
     /**
-     * 로그인 처리 (JWT 토큰 발급)
+     * 로그인 처리
      */
-    @PostMapping("/login")
-    public ResponseEntity<Map<String, Object>> loginUser(@RequestBody Map<String, String> loginRequest) {
-        try {
-            String userId = loginRequest.get("id");
+    @PostMapping("/signIn")
+    public ResponseEntity<SuccessResponse<Map<String, String>>> signIn(@RequestParam String id, @RequestParam String password){
 
-            // ID로 사용자 검증
-            int user = userService.validateUser(userId);
+        Map<String, String> token = userService.login(id, password);
+        return SuccessResponse.onSuccess("성공적으로 로그인하였습니다.", HttpStatus.OK, token);
+    }
 
-            // JWT 토큰 생성
-            String token = userService.generateToken(user);
-            return ResponseEntity.ok(Map.of("token", token, "userId", user));
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body(Map.of("error", "로그인 실패: " + e.getMessage()));
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(Map.of("error", "서버 오류: " + e.getMessage()));
-        }
+    @PostMapping("/logout")
+    public ResponseEntity<SuccessResponse<Void>> logout() {
+        return SuccessResponse.ok("성공적으로 로그아웃하였습니다.");
     }
 
     /**
      * JWT 토큰 유효성 검증
      */
-    @GetMapping("/validate")
-    public ResponseEntity<String> validateToken(@RequestHeader("Authorization") String token) {
-        try {
-            boolean isValid = userService.validateToken(token.replace("Bearer ", ""));
-            return isValid ? ResponseEntity.ok("유효한 토큰") : ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("유효하지 않은 토큰");
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("토큰 검증 중 오류 발생: " + e.getMessage());
-        }
-    }
+//    @GetMapping("/validate")
+//    public ResponseEntity<String> validateToken(@RequestHeader("Authorization") String token) {
+//        try {
+//            boolean isValid = userService.validateToken(token.replace("Bearer ", ""));
+//            return isValid ? ResponseEntity.ok("유효한 토큰") : ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("유효하지 않은 토큰");
+//        } catch (Exception e) {
+//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+//                    .body("토큰 검증 중 오류 발생: " + e.getMessage());
+//        }
+//    }
 }
