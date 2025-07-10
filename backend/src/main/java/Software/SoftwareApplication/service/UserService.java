@@ -21,6 +21,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.PostMapping;
 
 import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
@@ -83,24 +84,24 @@ public class UserService {
         }
     }
 
-    /**
-     * 사용자 로그인 메서드 - ID를 기반으로 검증 (String -> int 변환 포함)
-     */
-    public int validateUser(String id) {
-        try {
-            // ID를 int로 변환
-            int userId = Integer.parseInt(id);
-
-            // existing_user 테이블에서 userId 확인
-            if (existingUserRepository.existsById(userId)) {
-                return userId; // userId 반환
-            } else {
-                throw new RuntimeException("존재하지 않는 사용자 ID입니다.");
-            }
-        } catch (NumberFormatException e) {
-            throw new RuntimeException("ID는 숫자 형식이어야 합니다.", e);
-        }
-    }
+//    /**
+//     * 사용자 로그인 메서드 - ID를 기반으로 검증 (String -> int 변환 포함)
+//     */
+//    public int validateUser(String id) {
+//        try {
+//            // ID를 int로 변환
+//            int userId = Integer.parseInt(id);
+//
+//            // existing_user 테이블에서 userId 확인
+//            if (existingUserRepository.existsById(userId)) {
+//                return userId; // userId 반환
+//            } else {
+//                throw new RuntimeException("존재하지 않는 사용자 ID입니다.");
+//            }
+//        } catch (NumberFormatException e) {
+//            throw new RuntimeException("ID는 숫자 형식이어야 합니다.", e);
+//        }
+//    }
 
     public Map<String, String> login(String id, String password) {
 

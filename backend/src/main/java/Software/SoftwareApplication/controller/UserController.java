@@ -53,7 +53,7 @@ public class UserController {
     /**
      * 로그인 처리
      */
-    @PostMapping("/signIn")
+    @PostMapping("/signin")
     public ResponseEntity<SuccessResponse<Map<String, String>>> signIn(@RequestParam String id, @RequestParam String password){
 
         Map<String, String> token = userService.login(id, password);

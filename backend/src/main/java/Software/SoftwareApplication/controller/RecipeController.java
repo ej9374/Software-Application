@@ -4,6 +4,7 @@ import Software.SoftwareApplication.api.FlaskApiClient;
 import Software.SoftwareApplication.dto.DetailedRecipeResponseDto;
 import Software.SoftwareApplication.dto.HomeResponseDto;
 import Software.SoftwareApplication.dto.SignUpRecipeResponseDto;
+import Software.SoftwareApplication.service.HomeService;
 import Software.SoftwareApplication.service.RecipeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +22,14 @@ import java.util.Map;
 public class RecipeController {
 
     private final RecipeService recipeService;
+
+    private final HomeService homeService;
+
+    @PostMapping("/home")
+    public ResponseEntity<List<HomeResponseDto>> getHomeRecipes(@RequestBody Integer userId) {
+        List<HomeResponseDto> recipes = homeService.getHomeRecipes(userId);
+        return ResponseEntity.status(HttpStatus.OK).body(recipes);
+    }
 
     @PostMapping("/list")
     public ResponseEntity<List<HomeResponseDto>> getSimilarRecipes(@RequestBody Map<String, Long> request) {
