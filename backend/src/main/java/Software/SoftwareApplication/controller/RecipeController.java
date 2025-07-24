@@ -1,20 +1,15 @@
 package Software.SoftwareApplication.controller;
 
-import Software.SoftwareApplication.api.FlaskApiClient;
 import Software.SoftwareApplication.dto.DetailedRecipeResponseDto;
-import Software.SoftwareApplication.dto.HomeResponseDto;
-import Software.SoftwareApplication.dto.SignUpRecipeResponseDto;
-import Software.SoftwareApplication.service.HomeService;
+import Software.SoftwareApplication.dto.RecipeResponseDto;
+import Software.SoftwareApplication.global.response.SuccessResponse;
 import Software.SoftwareApplication.service.RecipeService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 @RequiredArgsConstructor
 @RestController
@@ -23,37 +18,23 @@ public class RecipeController {
 
     private final RecipeService recipeService;
 
-    private final HomeService homeService;
-
-    @PostMapping("/home")
-    public ResponseEntity<List<HomeResponseDto>> getHomeRecipes(@RequestBody Integer userId) {
-        List<HomeResponseDto> recipes = homeService.getHomeRecipes(userId);
-        return ResponseEntity.status(HttpStatus.OK).body(recipes);
+    @PostMapping("/collaborative")
+    public ResponseEntity<SuccessResponse<List<RecipeResponseDto>>> getHomeRecipes(@RequestBody String userId) {
+        List<RecipeResponseDto> recipes = recipeService.getCollaborativeRecommendation(userId);
+        return SuccessResponse.onSuccess("성공적으로 홈화면 레시피를 띄웠습니다.", HttpStatus.OK, recipes);
     }
 
-    @PostMapping("/list")
-    public ResponseEntity<List<HomeResponseDto>> getSimilarRecipes(@RequestBody Map<String, Long> request) {
-        Long recipeId = request.get("recipeId");
-        if (recipeId == null) {
-            System.out.println("Error: No recipeId provided in the request.");
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(List.of());
-        }
-
-        System.out.println("Received recipeId: " + recipeId);
-
-        List<HomeResponseDto> similarRecipes = recipeService.getRecommendedRecipes(recipeId);
-
-        System.out.println("Found recommended recipes: " + similarRecipes);
-        return ResponseEntity.status(HttpStatus.OK).body(similarRecipes);
+    @PostMapping("/content-based")
+    public ResponseEntity<SuccessResponse<List<RecipeResponseDto>>> getContentBasedRecommendationRecipes(@RequestBody Long recipeId) {
+        List<RecipeResponseDto> recommendations = recipeService.getContentBasedRecommendation(recipeId);
+        return SuccessResponse.onSuccess("성공적으로 content-based 추천 레시피를 찾았습니다.", HttpStatus.OK, recommendations);
     }
-
-
 
     // 특정 recipe_id로 상세 정보 반환
     @GetMapping("/{recipeId}")
-    public ResponseEntity<DetailedRecipeResponseDto> getRecipeDetails(@PathVariable Long recipeId) {
+    public ResponseEntity<SuccessResponse<DetailedRecipeResponseDto>> getRecipeDetails(@PathVariable Long recipeId) {
         DetailedRecipeResponseDto recipe = recipeService.getRecipeDetails(recipeId);
-        return ResponseEntity.status(HttpStatus.OK).body(recipe);
+        return SuccessResponse.onSuccess("해당 레시피 아이디에 대한 레시피 정보를 찾았습니다.",HttpStatus.OK, recipe);
     }
 
 

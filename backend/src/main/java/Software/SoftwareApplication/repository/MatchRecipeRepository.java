@@ -9,9 +9,4 @@ import java.util.List;
 
 public interface MatchRecipeRepository extends JpaRepository<MatchRecipeEntity, Integer> {
     MatchRecipeEntity findByNewRecipeId(Integer newRecipeId);
-
-    // 추천된 ID 리스트로 레시피 ID 리스트를 가져오는 메서드
-    @Query("SELECT m.recipe.recipeId FROM MatchRecipeEntity m WHERE m.newRecipeId IN :newRecipeIds")
-    List<Long> getRecipeIdsByNewRecipeIds(@Param("newRecipeIds") List<Integer> newRecipeIds);
-
 }

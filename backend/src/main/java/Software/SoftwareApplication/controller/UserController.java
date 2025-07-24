@@ -37,15 +37,6 @@ public class UserController {
 
     @PostMapping("/signup")
     public ResponseEntity<SuccessResponse<SignUpRequestDto>> signUp(@RequestBody SignUpRequestDto request) {
-  /*      try {
-            userService.registerUser(request);
-            return ResponseEntity.status(HttpStatus.CREATED).body("회원가입 성공");
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("입력 오류: " + e.getMessage());
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("회원가입 중 오류 발생: " + e.getMessage());
-        }*/
         userService.signUp(request);
         return SuccessResponse.onSuccess("회원가입이 성공적으로 완료되었습니다.", HttpStatus.CREATED, request);
     }
@@ -60,22 +51,17 @@ public class UserController {
         return SuccessResponse.onSuccess("성공적으로 로그인하였습니다.", HttpStatus.OK, token);
     }
 
+    /**
+     * access token 만료시 처리
+     */
+    @PostMapping("/refresh")
+    public ResponseEntity<SuccessResponse<Map<String, String>>> refresh(@RequestParam String refreshToken){
+        Map<String, String> token = userService.refreshAccessToken(refreshToken);
+        return SuccessResponse.onSuccess("성공적으로 access token을 재발급했습니다.", HttpStatus.OK, token);
+    }
     @PostMapping("/logout")
-    public ResponseEntity<SuccessResponse<Void>> logout() {
+    public ResponseEntity<SuccessResponse<Void>> logout(String id) {
+        userService.logout(id);
         return SuccessResponse.ok("성공적으로 로그아웃하였습니다.");
     }
-
-    /**
-     * JWT 토큰 유효성 검증
-     */
-//    @GetMapping("/validate")
-//    public ResponseEntity<String> validateToken(@RequestHeader("Authorization") String token) {
-//        try {
-//            boolean isValid = userService.validateToken(token.replace("Bearer ", ""));
-//            return isValid ? ResponseEntity.ok("유효한 토큰") : ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("유효하지 않은 토큰");
-//        } catch (Exception e) {
-//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-//                    .body("토큰 검증 중 오류 발생: " + e.getMessage());
-//        }
-//    }
 }

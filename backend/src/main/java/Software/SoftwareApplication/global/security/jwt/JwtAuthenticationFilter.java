@@ -35,12 +35,15 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        log.info("JwtFilter invoked, auth={} URI={}",
-                SecurityContextHolder.getContext().getAuthentication(),
-                request.getRequestURI());
 
         String token = extractToken(request);
-        if (token != null && jwtProvider.validationAccessToken(token)){
+
+        if (token == null || token.isBlank()){
+            filterChain.doFilter(request, response);
+            return;
+        }
+
+        if (jwtProvider.validationAccessToken(token)){
             Claims claims = jwtProvider.getClaimsFromAccessToken(token);
             String userId = jwtProvider.extractId(token);
             

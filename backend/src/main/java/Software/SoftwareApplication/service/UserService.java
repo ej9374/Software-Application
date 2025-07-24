@@ -2,6 +2,7 @@ package Software.SoftwareApplication.service;
 
 import Software.SoftwareApplication.dto.SignUpRequestDto;
 import Software.SoftwareApplication.dto.RatingDto;
+import Software.SoftwareApplication.entity.ExistingUserEntity;
 import Software.SoftwareApplication.entity.RecipeEntity;
 import Software.SoftwareApplication.entity.UserEntity;
 import Software.SoftwareApplication.entity.UserRatingsEntity;
@@ -42,9 +43,6 @@ public class UserService {
     private final UserRatingsRepository userRatingsRepository;
     private final ExistingUserRepository existingUserRepository;
 
-    @Value("z{jwt.secret}")
-    private SecretKey secretKey;
-
     /**
      * 사용자 등록 메서드
      */
@@ -84,29 +82,14 @@ public class UserService {
         }
     }
 
-//    /**
-//     * 사용자 로그인 메서드 - ID를 기반으로 검증 (String -> int 변환 포함)
-//     */
-//    public int validateUser(String id) {
-//        try {
-//            // ID를 int로 변환
-//            int userId = Integer.parseInt(id);
-//
-//            // existing_user 테이블에서 userId 확인
-//            if (existingUserRepository.existsById(userId)) {
-//                return userId; // userId 반환
-//            } else {
-//                throw new RuntimeException("존재하지 않는 사용자 ID입니다.");
-//            }
-//        } catch (NumberFormatException e) {
-//            throw new RuntimeException("ID는 숫자 형식이어야 합니다.", e);
-//        }
-//    }
-
+    @Transactional
     public Map<String, String> login(String id, String password) {
+//        ExistingUserEntity existingUser = existingUserRepository.findByUserId(id)
+//                .orElseThrow(() -> new CustomException(ErrorCode.NO_DATABASE_USER));
 
         UserEntity user = userRepository.findById(id)
                 .orElseThrow(() -> new CustomException(ErrorCode.INVALID_CREDENTIALS));
+
 
         if (!passwordEncoder.matches(password, user.getPassword())) {
             throw new CustomException(ErrorCode.INVALID_CREDENTIALS);
@@ -114,7 +97,37 @@ public class UserService {
 
         //성공시 토큰 생성
         String accessToken = jwtProvider.createAccessToken(user.getId());
-        String refreshToken = jwtProvider.createRefreshToken(user.getId());
+        String refreshToken = user.getRefreshToken();
+
+        if (refreshToken == null) {
+            refreshToken = jwtProvider.createRefreshToken(user.getId());
+            user.setRefreshToken(refreshToken);
+            userRepository.save(user);
+        }
+
+        Map<String, String> map = new HashMap<>();
+        map.put("accessToken", accessToken);
+        map.put("refreshToken", refreshToken);
+        return map;
+    }
+
+    @Transactional
+    public Map<String, String> refreshAccessToken(String refreshToken) {
+        if (!jwtProvider.validationRefreshToken(refreshToken)){
+            throw new CustomException(ErrorCode.JWT_TOKEN_EXPIRED);
+        }
+
+        String id = jwtProvider.extractId(refreshToken);
+        UserEntity user = userRepository.findById(id)
+                .orElseThrow(() -> new CustomException(ErrorCode.NO_JWT_REFRESH_TOKEN));
+
+        if (!refreshToken.equals(user.getRefreshToken())) {
+            user.updateRefreshToken(null);
+            userRepository.save(user);
+            throw new CustomException(ErrorCode.JWT_TOKEN_EXPIRED);
+        }
+
+        String accessToken = jwtProvider.createAccessToken(id);
 
         Map<String, String> map = new HashMap<>();
         map.put("accessToken", accessToken);
@@ -123,7 +136,10 @@ public class UserService {
     }
 
     public void logout(String id) {
-
+        UserEntity user = userRepository.findById(id)
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+        user.updateRefreshToken(null);
+        userRepository.save(user);
     }
 
 

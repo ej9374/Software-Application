@@ -14,8 +14,9 @@ public class ExistingUserEntity {
 
     @Id
     @Column(name = "user_id")
-    private Integer userId;
+    private String userId;
 
     @Column(name = "new_user_id")
     private Integer newUserId;
+
 }

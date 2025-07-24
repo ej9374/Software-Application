@@ -22,8 +22,15 @@ public class UserEntity {
     @Column(name = "password", length = 255, nullable = false)
     private String password;
 
+    @Column(name = "refreshToken")
+    private String refreshToken;
+
     public UserEntity(String id, String password) {
         this.id = id;
         this.password = password;
+    }
+
+    public void updateRefreshToken(String refreshToken) {
+        this.refreshToken = refreshToken;
     }
 }

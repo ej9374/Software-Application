@@ -2,6 +2,7 @@ package Software.SoftwareApplication.global.exception.handler;
 
 import Software.SoftwareApplication.global.exception.base.CustomException;
 import Software.SoftwareApplication.global.exception.custom.EntityNotFoundException;
+import Software.SoftwareApplication.global.exception.custom.RestClientException;
 import Software.SoftwareApplication.global.exception.custom.UserNotFoundException;
 import Software.SoftwareApplication.global.exception.response.ErrorResponse;
 import org.springframework.http.HttpStatus;
@@ -34,5 +35,12 @@ public class GlobalExceptionHandler {
         return ResponseEntity
                 .status(HttpStatus.NOT_FOUND)
                 .body(new ErrorResponse(HttpStatus.NOT_FOUND.value(), "NOT_FOUND", e.getMessage()));
+    }
+
+    @ExceptionHandler(RestClientException.class)
+    public ResponseEntity<ErrorResponse> handleRestClientException(RestClientException e) {
+        return ResponseEntity
+                .status(HttpStatus.BAD_GATEWAY)
+                .body(new ErrorResponse(HttpStatus.BAD_GATEWAY.value(), "REST_CLIENT_ERROR", e.getMessage()));
     }
 }
