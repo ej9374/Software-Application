@@ -3,7 +3,6 @@ package Software.SoftwareApplication.service;
 import Software.SoftwareApplication.global.exception.custom.RestClientException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Value;
-import Software.SoftwareApplication.api.FlaskApiClient;
 import Software.SoftwareApplication.dto.DetailedRecipeResponseDto;
 import Software.SoftwareApplication.dto.RecipeResponseDto;
 import Software.SoftwareApplication.dto.SignUpRecipeResponseDto;
