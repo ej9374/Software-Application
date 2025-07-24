@@ -35,7 +35,6 @@ public class RecipeService {
     private final SignUpRecipeRepository signUpRecipeRepository;
     private final ExistingUserRepository existingUserRepository;
     private final MatchRecipeRepository matchRecipeRepository;
-    private final FlaskApiClient flaskApiClient;
     private final RestTemplate restTemplate;
 
     @Value("${flask.server.url}")
