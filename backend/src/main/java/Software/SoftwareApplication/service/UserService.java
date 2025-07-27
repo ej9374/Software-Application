@@ -49,8 +49,9 @@ public class UserService {
     @Transactional
     public void signUp(SignUpRequestDto request) {
         // ID로 사용자 찾기
-        userRepository.findById(request.getId())
-                .orElseThrow(() -> new CustomException(ErrorCode.DUPLICATE_ID));
+        if (userRepository.existsById(request.getId())){
+            throw new CustomException(ErrorCode.DUPLICATE_ID);
+        }
 
         // 새로운 사용자 저장
         UserEntity user = new UserEntity();
@@ -141,6 +142,5 @@ public class UserService {
         user.updateRefreshToken(null);
         userRepository.save(user);
     }
-
 
 }

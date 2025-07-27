@@ -5,8 +5,10 @@ import Software.SoftwareApplication.global.exception.custom.EntityNotFoundExcept
 import Software.SoftwareApplication.global.exception.custom.RestClientException;
 import Software.SoftwareApplication.global.exception.custom.UserNotFoundException;
 import Software.SoftwareApplication.global.exception.response.ErrorResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -14,6 +16,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @RestControllerAdvice
+@Slf4j
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(CustomException.class)
@@ -43,4 +46,11 @@ public class GlobalExceptionHandler {
                 .status(HttpStatus.BAD_GATEWAY)
                 .body(new ErrorResponse(HttpStatus.BAD_GATEWAY.value(), "REST_CLIENT_ERROR", e.getMessage()));
     }
+
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity<ErrorResponse> handleBadRequest(HttpMessageNotReadableException ex) {
+        log.error("JSON 파싱 실패: {}", ex.getMessage());
+        return ResponseEntity.badRequest().body(new ErrorResponse(HttpStatus.BAD_REQUEST.value(), "BAD_REQUEST", ex.getMessage()));
+    }
+
 }

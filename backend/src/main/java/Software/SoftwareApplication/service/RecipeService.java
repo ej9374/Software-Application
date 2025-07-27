@@ -157,7 +157,8 @@ public class RecipeService {
         //랜덤하게 섞고 그중 10개 추출
         Collections.shuffle(allRecipes);
 
-        List<RecipeEntity> selected = allRecipes.subList(0, 10);
+        List<RecipeEntity> selected = allRecipes.subList(0, Math.min(10, allRecipes.size()));
+
 
         return selected.stream()
                 .map(recipe -> new SignUpRecipeResponseDto(

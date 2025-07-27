@@ -37,7 +37,4 @@ public class RecipeController {
         return SuccessResponse.onSuccess("해당 레시피 아이디에 대한 레시피 정보를 찾았습니다.",HttpStatus.OK, recipe);
     }
 
-
-
-
 }
