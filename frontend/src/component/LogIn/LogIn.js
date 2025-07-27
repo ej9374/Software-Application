@@ -10,18 +10,20 @@ function LogIn({ setIsLoggedIn }) {
 
     const handleLogin = async () => {
         try {
-            const response = await fetch("/api/login", {
+            const response = await fetch(`/api/signin?id=${id}&password=${password}`, {
                 method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({ id, password }),
             });
 
             if (response.ok) {
-                const { token, userId } = await response.json();
-                localStorage.setItem("token", token); // Save JWT
-                localStorage.setItem("userId", userId); // Save userId
+                const result = await response.json()
+               // 백엔드가 보내준 구조에 맞게 추출
+                const { accessToken, refreshToken } = result.data;
+
+                // localStorage에 저장
+                localStorage.setItem("accessToken", accessToken);
+                localStorage.setItem("refreshToken", refreshToken);
+                localStorage.setItem("userId", id);
+
                 setIsLoggedIn(true);
                 navigate("/"); // Redirect to the homepage
             } else {

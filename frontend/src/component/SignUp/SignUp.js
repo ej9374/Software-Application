@@ -16,8 +16,8 @@ function SignUp() {
                 if (!response.ok) {
                     throw new Error(`Error fetching recipes: ${response.statusText}`);
                 }
-                const data = await response.json();
-                setRecipes(data);
+                const result = await response.json();
+                setRecipes(result.data);
             } catch (error) {
                 console.error('Error fetching random recipes:', error);
                 alert("랜덤 레시피를 불러오는 중 오류가 발생했습니다.");
@@ -57,15 +57,20 @@ function SignUp() {
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ user_id: id, password, ratings: ratingData }),
+                body: JSON.stringify({ 
+                    id: id, 
+                    password, 
+                    ratings: ratingData 
+                }),
             });
 
             if (!response.ok) {
+                const errorMessage = await response.text();
                 throw new Error(`Error submitting ratings: ${response.statusText}`);
             }
-
-            const data = await response.json();
-            alert("회원가입이 완료되었습니다.");
+            const result = await response.json();
+            console.log("회원가입 응답:", result);
+            alert(result.message); 
             navigate("/login");
         } catch (error) {
             console.error('Error submitting ratings:', error);

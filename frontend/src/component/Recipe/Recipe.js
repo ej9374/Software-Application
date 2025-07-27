@@ -6,7 +6,8 @@ function Recipe() {
     const { state } = useLocation();
     const { recipeId } = state || {};
     const [recipe, setRecipe] = useState(null);
-
+    const navigate = useNavigate();
+    
     useEffect(() => {
         if (!recipeId) {
             console.error("No recipeId provided in state.");
@@ -15,11 +16,28 @@ function Recipe() {
 
         const fetchRecipeDetails = async () => {
             try {
-                const response = await fetch(`/api/recipes/${recipeId}`);
-                const data = await response.json();
-                console.log("Fetched Recipe Details:", data); // 디버깅 로그 추가
-                setRecipe(data);
-            } catch (error) {
+                const token = localStorage.getItem("accessToken");
+
+                const response = await fetch(`/api/recipes/${recipeId}`, {
+                    method: "GET",
+                    headers: {
+                        Authorization: `Bearer ${token}`, // ✅ 인증
+                    }
+                });
+
+                if (!response.ok) {
+                    if (response.status === 401 || response.status === 403) {
+                        localStorage.clear();
+                        navigate("/login");
+                        return;
+                    }
+                    throw new Error("Failed to fetch recipe details");
+                }
+
+                const result = await response.json();
+                console.log("Fetched Recipe Details:", result.data);
+                setRecipe(result.data);
+            } catch(error){
                 console.error("Failed to fetch recipe details:", error);
             }
         };
@@ -147,21 +165,32 @@ function Recommend({ recipeId }) {
 
         const fetchRecommendations = async () => {
             try {
-                const response = await fetch("/api/recipes/list", {
+                const token = localStorage.getItem("token");
+
+                const response = await fetch("/api/recipes/content-based", {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json",
+                        Authorization: `Bearer ${token}`, // ✅ 토큰 포함
                     },
-                    body: JSON.stringify({ recipeId }),
+                    body: JSON.stringify(recipeId),
                 });
+
+                if (!response.ok) {
+                    if (response.status === 401 || response.status === 403) {
+                        localStorage.clear();
+                        navigate("/login");
+                        return;
+                    }
+                    throw new Error(`Error fetching recommendations: ${response.statusText}`);
+                }
+
+                const result = await response.json();
 
                 if (!response.ok) {
                     throw new Error(`Error fetching recommendations: ${response.statusText}`);
                 }
-
-                const data = await response.json();
-                console.log("Received recommendations from server:", data);
-                setRecipes(data);
+                setRecipes(result.data);
             } catch (error) {
                 console.error("Failed to fetch recommendations:", error);
             } finally {
