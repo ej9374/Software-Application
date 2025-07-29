@@ -46,7 +46,6 @@ public class UserController {
      */
     @PostMapping("/signin")
     public ResponseEntity<SuccessResponse<Map<String, String>>> signIn(@RequestParam String id, @RequestParam String password){
-
         Map<String, String> token = userService.login(id, password);
         return SuccessResponse.onSuccess("성공적으로 로그인하였습니다.", HttpStatus.OK, token);
     }
@@ -59,6 +58,7 @@ public class UserController {
         Map<String, String> token = userService.refreshAccessToken(refreshToken);
         return SuccessResponse.onSuccess("성공적으로 access token을 재발급했습니다.", HttpStatus.OK, token);
     }
+
     @PostMapping("/logout")
     public ResponseEntity<SuccessResponse<Void>> logout(String id) {
         userService.logout(id);
